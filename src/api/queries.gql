@@ -1,0 +1,59 @@
+
+fragment TIMERECORD_INFO on Timerecord {
+  id
+  timespent
+  startdate
+  enddate
+  running
+  notes
+  task{
+    id
+  }
+  contact {
+    id
+    fullname
+  }
+}
+
+query GET_TASKS {
+  tasks(
+    input: {
+      limit: 10
+      orderby: { name: asc }
+      where: { 
+          displaytype:{NEQ:heading},
+          status: { EQ: active } }
+    }
+  ) {
+    id
+    name
+    timerecords(input:{running:{IN:[true,false]}}) {
+      ...TIMERECORD_INFO
+    }
+    taskTotalTimespent: timespent
+  }
+}
+
+
+mutation STOP_TIMERECORD($input: StartTimerecordInput) {
+  stopTimerecord(input: $input) {
+   ...TIMERECORD_INFO
+    }
+}
+
+mutation START_TIMERECORD($input: StartTimerecordInput) {
+  startTimerecord(input: $input) {
+    ...TIMERECORD_INFO
+  }
+}
+"""
+example mutation input
+{
+  "input": {
+    "taskid": 123,
+    "notes": "Example Notes"
+  }
+}
+"""
+
+
